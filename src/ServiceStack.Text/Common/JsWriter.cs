@@ -23,6 +23,9 @@ namespace ServiceStack.Text.Common
         public const char ListEndChar = ']';
         public const char ReturnChar = '\r';
         public const char LineFeedChar = '\n';
+        public const char SpaceChar = ' ';
+        public const char TabChar = '\t';
+        public const char EscapeChar = '\\';
 
         public const char QuoteChar = '"';
         public const string QuoteString = "\"";

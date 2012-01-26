@@ -29,8 +29,8 @@ namespace ServiceStack.Text.Common
 		private static readonly string TypeAttrInObject = Serializer.TypeAttrInObject;
 
 		public static ParseStringDelegate GetParseMethod(Type type)
-		{
-			if (!type.IsClass || type.IsAbstract || type.IsInterface) return null;
+        {
+            if ((!type.IsClass || type.IsAbstract || type.IsInterface) && !TypeConfig.HasConstructorFor(type)) return null;
 
 			var propertyInfos = type.GetSerializableProperties();
 			if (propertyInfos.Length == 0)
@@ -46,7 +46,7 @@ namespace ServiceStack.Text.Common
 				map[propertyInfo.Name] = TypeAccessor.Create(Serializer, type, propertyInfo);
 			}
 
-			var ctorFn = ReflectionExtensions.GetConstructorMethodToCache(type);
+            var ctorFn = TypeConfig.Get(type) ?? ReflectionExtensions.GetConstructorMethodToCache(type);
 
 			return value => StringToType(type, value, ctorFn, map);
 		}
