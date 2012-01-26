@@ -148,6 +148,7 @@
     <Compile Include="CsvTests\CustomHeaderTests.cs" />
     <Compile Include="JsonTests\PolymorphicListTests.cs" />
     <Compile Include="JsvTests\JsWriterUnformat.cs" />
+    <Compile Include="JsvTests\TypeSerializerConstructorInjection.cs" />
     <Compile Include="MessagingTests.cs" />
     <Compile Include="NullableTypesTests.cs" />
     <Compile Include="StringTests.cs" />
