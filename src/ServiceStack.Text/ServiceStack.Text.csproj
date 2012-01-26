@@ -81,6 +81,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CsvConfig.cs" />
+    <Compile Include="IConstructorFactory.cs" />
     <Compile Include="JsConfig.cs" />
     <Compile Include="Common\DeserializeSpecializedCollections.cs" />
     <Compile Include="Common\JsReader.cs" />

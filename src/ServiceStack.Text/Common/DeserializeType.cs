@@ -28,28 +28,30 @@ namespace ServiceStack.Text.Common
 
 		private static readonly string TypeAttrInObject = Serializer.TypeAttrInObject;
 
-		public static ParseStringDelegate GetParseMethod(Type type)
+        public static ParseStringDelegate GetParseMethod(Type type)
         {
-            if ((!type.IsClass || type.IsAbstract || type.IsInterface) && !TypeConfig.HasConstructorFor(type)) return null;
+            EmptyCtorDelegate ctorFn = TypeConfig.ConstructorFactory.Get(type);
 
-			var propertyInfos = type.GetSerializableProperties();
-			if (propertyInfos.Length == 0)
-			{
-				var emptyCtorFn = ReflectionExtensions.GetConstructorMethodToCache(type);
-				return value => emptyCtorFn();
-			}
+            if ((!type.IsClass || type.IsAbstract || type.IsInterface) && ctorFn == null) return null;
 
-			var map = new Dictionary<string, TypeAccessor>(StringComparer.OrdinalIgnoreCase);
+            var propertyInfos = type.GetSerializableProperties();
+            if (propertyInfos.Length == 0)
+            {
+                ctorFn = ctorFn ?? ReflectionExtensions.GetConstructorMethodToCache(type);
+                return value => ctorFn();
+            }
 
-			foreach (var propertyInfo in propertyInfos)
-			{
-				map[propertyInfo.Name] = TypeAccessor.Create(Serializer, type, propertyInfo);
-			}
+            var map = new Dictionary<string, TypeAccessor>(StringComparer.OrdinalIgnoreCase);
 
-            var ctorFn = TypeConfig.Get(type) ?? ReflectionExtensions.GetConstructorMethodToCache(type);
+            foreach (var propertyInfo in propertyInfos)
+            {
+                map[propertyInfo.Name] = TypeAccessor.Create(Serializer, type, propertyInfo);
+            }
 
-			return value => StringToType(type, value, ctorFn, map);
-		}
+            ctorFn = ctorFn ?? ReflectionExtensions.GetConstructorMethodToCache(type);
+
+            return value => StringToType(type, value, ctorFn, map);
+        }
 
 		public static object ObjectStringToType(string strType)
 		{

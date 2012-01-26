@@ -5,36 +5,51 @@ using System.Reflection;
 
 namespace ServiceStack.Text
 {
-    static class TypeConfig
+    public static class TypeConfig
     {
-        static Dictionary<Type, EmptyCtorDelegate> constructors = new Dictionary<Type, EmptyCtorDelegate>();
-        static Dictionary<Type, bool> trimNamesAndValues = new Dictionary<Type, bool>();
-
-        public static EmptyCtorDelegate Get(Type type)
+        sealed class DefaultConstructorFactory : IConstructorFactory
         {
-            EmptyCtorDelegate func = null;
-            constructors.TryGetValue(type, out func);
-            return func;
+            static readonly DefaultConstructorFactory instance;
+
+            static DefaultConstructorFactory()
+            {
+                instance = new DefaultConstructorFactory();
+            }
+
+            public static DefaultConstructorFactory Instance
+            {
+                get
+                {
+                    return instance;
+                }
+            }
+
+            DefaultConstructorFactory() { }
+
+            public EmptyCtorDelegate Get(Type type)
+            {
+                return null;
+            }
         }
 
-        public static void Set<T>(Type type, Func<T> func)
-        {
-            if (func == null)
-                constructors[type] = null;
-            else
-                constructors[type] = () => func();
-        }
+        static IConstructorFactory factory;
+        static TypeConfig() { factory = DefaultConstructorFactory.Instance; }
 
-        public static bool HasConstructorFor(Type type)
+        public static IConstructorFactory ConstructorFactory
         {
-            return constructors.ContainsKey(type);
+            get
+            {
+                return factory;
+            }
+            set
+            {
+                factory = value ?? DefaultConstructorFactory.Instance;
+            }
         }
     }
 
 	public static class TypeConfig<T>
     {
-        public static Func<T> Constructor { set { TypeConfig.Set(typeof(T), value); } }
-
 		public static PropertyInfo[] Properties = new PropertyInfo[0];
 
 		static TypeConfig()
