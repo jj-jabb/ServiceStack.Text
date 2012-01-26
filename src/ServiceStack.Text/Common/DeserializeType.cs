@@ -28,30 +28,30 @@ namespace ServiceStack.Text.Common
 
 		private static readonly string TypeAttrInObject = Serializer.TypeAttrInObject;
 
-        public static ParseStringDelegate GetParseMethod(Type type)
-        {
-            EmptyCtorDelegate ctorFn = TypeConfig.ConstructorFactory.Get(type);
+		public static ParseStringDelegate GetParseMethod(Type type)
+		{
+			EmptyCtorDelegate ctorFn = TypeConfig.ConstructorFactory.Get(type);
 
-            if ((!type.IsClass || type.IsAbstract || type.IsInterface) && ctorFn == null) return null;
+			if ((!type.IsClass || type.IsAbstract || type.IsInterface) && ctorFn == null) return null;
 
-            var propertyInfos = type.GetSerializableProperties();
-            if (propertyInfos.Length == 0)
-            {
-                ctorFn = ctorFn ?? ReflectionExtensions.GetConstructorMethodToCache(type);
-                return value => ctorFn();
-            }
+			var propertyInfos = type.GetSerializableProperties();
+			if (propertyInfos.Length == 0)
+			{
+				ctorFn = ctorFn ?? ReflectionExtensions.GetConstructorMethodToCache(type);
+				return value => ctorFn();
+			}
 
-            var map = new Dictionary<string, TypeAccessor>(StringComparer.OrdinalIgnoreCase);
+			var map = new Dictionary<string, TypeAccessor>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (var propertyInfo in propertyInfos)
-            {
-                map[propertyInfo.Name] = TypeAccessor.Create(Serializer, type, propertyInfo);
-            }
+			foreach (var propertyInfo in propertyInfos)
+			{
+				map[propertyInfo.Name] = TypeAccessor.Create(Serializer, type, propertyInfo);
+			}
 
-            ctorFn = ctorFn ?? ReflectionExtensions.GetConstructorMethodToCache(type);
+			ctorFn = ctorFn ?? ReflectionExtensions.GetConstructorMethodToCache(type);
 
-            return value => StringToType(type, value, ctorFn, map);
-        }
+			return value => StringToType(type, value, ctorFn, map);
+		}
 
 		public static object ObjectStringToType(string strType)
 		{
@@ -205,7 +205,8 @@ namespace ServiceStack.Text.Common
 
 			public static TypeAccessor Create(ITypeSerializer serializer, Type type, PropertyInfo propertyInfo)
 			{
-				return new TypeAccessor {
+				return new TypeAccessor
+				{
 					GetProperty = serializer.GetParseFn(propertyInfo.PropertyType),
 					SetProperty = GetSetPropertyMethod(type, propertyInfo),
 				};

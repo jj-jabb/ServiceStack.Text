@@ -5,51 +5,51 @@ using System.Reflection;
 
 namespace ServiceStack.Text
 {
-    public static class TypeConfig
-    {
-        sealed class DefaultConstructorFactory : IConstructorFactory
-        {
-            static readonly DefaultConstructorFactory instance;
+	public static class TypeConfig
+	{
+		sealed class DefaultConstructorFactory : IConstructorFactory
+		{
+			static readonly DefaultConstructorFactory instance;
 
-            static DefaultConstructorFactory()
-            {
-                instance = new DefaultConstructorFactory();
-            }
+			static DefaultConstructorFactory()
+			{
+				instance = new DefaultConstructorFactory();
+			}
 
-            public static DefaultConstructorFactory Instance
-            {
-                get
-                {
-                    return instance;
-                }
-            }
+			public static DefaultConstructorFactory Instance
+			{
+				get
+				{
+					return instance;
+				}
+			}
 
-            DefaultConstructorFactory() { }
+			DefaultConstructorFactory() { }
 
-            public EmptyCtorDelegate Get(Type type)
-            {
-                return null;
-            }
-        }
+			public EmptyCtorDelegate Get(Type type)
+			{
+				return null;
+			}
+		}
 
-        static IConstructorFactory factory;
-        static TypeConfig() { factory = DefaultConstructorFactory.Instance; }
+		static IConstructorFactory factory;
+		static TypeConfig() { factory = DefaultConstructorFactory.Instance; }
 
-        public static IConstructorFactory ConstructorFactory
-        {
-            get
-            {
-                return factory;
-            }
-            set
-            {
-                factory = value ?? DefaultConstructorFactory.Instance;
-            }
-        }
-    }
+		public static IConstructorFactory ConstructorFactory
+		{
+			get
+			{
+				return factory;
+			}
+			set
+			{
+				factory = value ?? DefaultConstructorFactory.Instance;
+			}
+		}
+	}
 
 	public static class TypeConfig<T>
-    {
+	{
 		public static PropertyInfo[] Properties = new PropertyInfo[0];
 
 		static TypeConfig()

@@ -26,26 +26,26 @@ namespace ServiceStack.Text
 
 			var tabCount = 0;
 			var sb = new StringBuilder();
-            var firstKeySeparator = true;
-            char? quoteChar = null;
+			var firstKeySeparator = true;
+			char? quoteChar = null;
 
 			for (var i = 0; i < serializedText.Length; i++)
 			{
 				var current = serializedText[i];
 
-                if (quoteChar.HasValue)
-                {
-                    sb.Append(current);
-                    if (quoteChar.Value == current)
-                        quoteChar = null;
-                    continue;
-                }
-                else if (current == JsWriter.QuoteChar)
-                {
-                    sb.Append(current);
-                    quoteChar = current;
-                    continue;
-                }
+				if (quoteChar.HasValue)
+				{
+					sb.Append(current);
+					if (quoteChar.Value == current)
+						quoteChar = null;
+					continue;
+				}
+				else if (current == JsWriter.QuoteChar)
+				{
+					sb.Append(current);
+					quoteChar = current;
+					continue;
+				}
 
 				var previous = i - 1 >= 0 ? serializedText[i - 1] : 0;
 				var next = i < serializedText.Length - 1 ? serializedText[i + 1] : 0;
@@ -98,105 +98,105 @@ namespace ServiceStack.Text
 			return sb.ToString();
 		}
 
-        static void EatWhiteSpace(string serializedText, ref int pos)
-        {
-            pos++;
-            while (pos < serializedText.Length)
-            {
-                switch (serializedText[pos])
-                {
-                    case JsWriter.SpaceChar:
-                    case JsWriter.TabChar:
-                    case JsWriter.LineFeedChar:
-                    case JsWriter.ReturnChar:
-                        pos++;
-                        break;
+		static void EatWhiteSpace(string serializedText, ref int pos)
+		{
+			pos++;
+			while (pos < serializedText.Length)
+			{
+				switch (serializedText[pos])
+				{
+					case JsWriter.SpaceChar:
+					case JsWriter.TabChar:
+					case JsWriter.LineFeedChar:
+					case JsWriter.ReturnChar:
+						pos++;
+						break;
 
-                    default:
-                        return;
-                }
-            }
-        }
+					default:
+						return;
+				}
+			}
+		}
 
-        public static string UnFormat(string serializedText)
-        {
-            if (serializedText == null || serializedText.Length == 0)
-                return serializedText;
+		public static string UnFormat(string serializedText)
+		{
+			if (serializedText == null || serializedText.Length == 0)
+				return serializedText;
 
-            var sb = new StringBuilder();
-            var wsStart = 0;
-            var wsLength = 0;
+			var sb = new StringBuilder();
+			var wsStart = 0;
+			var wsLength = 0;
 
-            var pos = 0;
-            char? quoteChar = null;
-            char current;
+			var pos = 0;
+			char? quoteChar = null;
+			char current;
 
-            EatWhiteSpace(serializedText, ref pos);
+			EatWhiteSpace(serializedText, ref pos);
 
-            do
-            {
-                current = serializedText[pos];
+			do
+			{
+				current = serializedText[pos];
 
-                if (quoteChar.HasValue)
-                {
-                    sb.Append(current);
-                    pos++;
-                    if (quoteChar.Value == current)
-                        quoteChar = null;
-                    continue;
-                }
+				if (quoteChar.HasValue)
+				{
+					sb.Append(current);
+					pos++;
+					if (quoteChar.Value == current)
+						quoteChar = null;
+					continue;
+				}
 
-                if (current == JsWriter.EscapeChar)
-                {
-                    sb.Append(current);
-                    sb.Append(serializedText[++pos]);
-                    pos++;
-                    wsLength = 0;
-                    wsStart = pos;
-                    continue;
-                }
+				if (current == JsWriter.EscapeChar)
+				{
+					sb.Append(current);
+					sb.Append(serializedText[++pos]);
+					pos++;
+					wsLength = 0;
+					wsStart = pos;
+					continue;
+				}
 
-                switch (current)
-                {
-                    case JsWriter.QuoteChar:
-                        sb.Append(current);
-                        pos++;
-                        quoteChar = current;
-                        break;
+				switch (current)
+				{
+					case JsWriter.QuoteChar:
+						sb.Append(current);
+						pos++;
+						quoteChar = current;
+						break;
 
-                    case JsWriter.SpaceChar:
-                    case JsWriter.TabChar:
-                    case JsWriter.LineFeedChar:
-                    case JsWriter.ReturnChar:
-                        wsLength++;
-                        pos++;
-                        break;
+					case JsWriter.SpaceChar:
+					case JsWriter.TabChar:
+					case JsWriter.LineFeedChar:
+					case JsWriter.ReturnChar:
+						wsLength++;
+						pos++;
+						break;
 
-                    case JsWriter.MapStartChar:
-                    case JsWriter.ListStartChar:
-                    case JsWriter.MapKeySeperator:
-                    case JsWriter.ItemSeperator:
-                    case JsWriter.MapEndChar:
-                    case JsWriter.ListEndChar:
-                        sb.Append(current);
-                        EatWhiteSpace(serializedText, ref pos);
-                        wsLength = 0;
-                        break;
+					case JsWriter.MapStartChar:
+					case JsWriter.ListStartChar:
+					case JsWriter.MapKeySeperator:
+					case JsWriter.ItemSeperator:
+					case JsWriter.MapEndChar:
+					case JsWriter.ListEndChar:
+						sb.Append(current);
+						EatWhiteSpace(serializedText, ref pos);
+						wsLength = 0;
+						break;
 
-                    default:
-                        if (wsLength > 0)
-                            sb.Append(serializedText.Substring(wsStart, wsLength));
-                        sb.Append(current);
-                        pos++;
-                        wsStart = pos;
-                        wsLength = 0;
-                        break;
+					default:
+						if (wsLength > 0)
+							sb.Append(serializedText.Substring(wsStart, wsLength));
+						sb.Append(current);
+						pos++;
+						wsStart = pos;
+						wsLength = 0;
+						break;
 
-                }
-            } while (pos < serializedText.Length);
+				}
+			} while (pos < serializedText.Length);
 
-            return sb.ToString();
-        }
+			return sb.ToString();
+		}
 
 		private static void AppendTabLine(StringBuilder sb, int tabCount)
 		{

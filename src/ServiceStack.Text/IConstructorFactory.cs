@@ -2,8 +2,8 @@
 
 namespace ServiceStack.Text
 {
-    public interface IConstructorFactory
-    {
-        EmptyCtorDelegate Get(Type type);
-    }
+	public interface IConstructorFactory
+	{
+		EmptyCtorDelegate Get(Type type);
+	}
 }
